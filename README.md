@@ -27,13 +27,34 @@
 4. Lakukan migrasi database dan seed data untuk stok mobil dan motor
   >  php artisan:migrate fresh --seed
 
-5. Lakukan Testing menggunakan PHP PEST
+5. Ubah ObjectID yang berada di file tests\Unit menjadi sesuai dengan objek mobils dan motors yang ada di database
+  ``` postJson('api/transact', [
+            'nama' => 'sakila', 
+            'harga' => 100000, 
+            'alamat' => 'SDA', 
+            'item' => [
+                [
+                    // Ganti ID ini dengan id yang ada di Database
+                    'id' => '60ca1e59f11000009f001889',
+                    'kendaraan' => 'mobils',
+                    'jumlah' => 3
+                ],
+                [
+                    'id' => '60ca1e59f11000009f00188e',
+                    'kendaraan' => 'motors',
+                    'jumlah' => 3
+                ]
+            ]
+        ]);
+  ```
+
+6. Lakukan Testing menggunakan PHP PEST
       - Untuk Windows
         > .\vendor\bin\pest 
       - Untuk OS berbasis *NIX
         > ./vendor/bin/pest
 
-6. Jalankan project seperti biasa setelah test 
+7. Jalankan project seperti biasa setelah test 
   > php artisan serve
 
 ### Untuk Docker
@@ -66,6 +87,64 @@
         > .\vendor\bin\sail php artisan migrate:fresh --seed 
       - Untuk OS berbasis *NIX
         > ./vendor/bin/sail php artisan migrate:fresh --seed 
+
+## API Usage
+
+  ### Endpoint Untuk User 
+
+  - api/register \
+      Metode POST dengan menggunakan Body JSON
+    ``` 
+    {
+        "name"     : "Taylor Swift", 
+        "email"    : "swift@gmail.com", 
+        "password" : "rooted"
+    }
+     ``` 
+  - api/login \
+      Metode POST dengan menggunakan Body JSON
+    ``` 
+    {
+        "email"    : "swift@gmail.com", 
+        "password" : "rooted"
+    }
+     ```
+
+    ### Endpoint Untuk Transact 
+
+  - api/transact \
+      Metode GET harus dengan token yang di paasangkan ke Header \
+      Berguna untuk melihat laporan penjualan
+      ```
+        "Authorization" : "Bearer token"
+      ```
+  - api/transact \
+      Metode POST dengan menggunakan Body JSON
+      Pastikan id mobil dan jumlah yang akan di POST tidak melebihi stok mobil dan kendaraaan yang ada di database \
+      Ketika proses transaksi berhasil maka jumlah stok di database akan berulang
+    ``` 
+    {
+      "nama" :"sakila", 
+      "harga" : 100000, 
+      "alamat" : 'SDA', 
+      "item" : {
+                  [
+                      // Ganti ID ini dengan id yang ada di Database
+                      "id"        : "60ca1e59f11000009f001889",
+                      "kendaraan" : "mobils",
+                      "jumlah"    : 3
+                  ],
+                  [
+                      "id"        : '60ca1e59f11000009f00188e',
+                      "kendaraan" : 'motors',
+                      "jumlah"    : 3
+                  ]   
+            }
+    }
+     ```
+
+
+
 
 
 
